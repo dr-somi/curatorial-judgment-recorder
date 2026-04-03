@@ -1,1 +1,432 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUNCHED IN — Live Display</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0D0B;
+    --punch: #E83B2A;
+    --gold: #C8A84B;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-mono);
+    background: var(--bg);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  /* 배경 스캔라인 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* 상단 헤더 */
+  .display-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(13,13,11,0.95) 0%, transparent 100%);
+  }
+  .display-title {
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .display-subtitle {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(245,240,232,0.3);
+    text-transform: uppercase;
+  }
+  .live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(245,240,232,0.4);
+    text-transform: uppercase;
+  }
+  .live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--punch);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  /* 카드 컨테이너 */
+  #cardStage {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+  }
+
+  /* 떠다니는 카드 */
+  .float-card {
+    position: absolute;
+    width: 260px;
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    opacity: 0;
+    transform: translateY(30px) rotate(var(--rot));
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    animation: float var(--duration) ease-in-out infinite var(--delay);
+  }
+  .float-card.visible {
+    opacity: 1;
+    transform: translateY(0) rotate(var(--rot));
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(var(--rot)); }
+    33% { transform: translateY(-12px) rotate(var(--rot)); }
+    66% { transform: translateY(6px) rotate(var(--rot)); }
+  }
+
+  /* 역할별 카드 색상 */
+  .float-card.role-student { --card-bg: #C8D8E8; --card-ink: #1A2A3A; --card-accent: #2A5A8A; }
+  .float-card.role-faculty { --card-bg: #E8D08A; --card-ink: #2A1A08; --card-accent: #8A5A10; }
+  .float-card.role-artist  { --card-bg: #E8C8D0; --card-ink: #2A1A1E; --card-accent: #8A2A4A; }
+  .float-card.role-outside { --card-bg: #D0C8E8; --card-ink: #1A1A2A; --card-accent: #4A2A8A; }
+  .float-card.role-default { --card-bg: #F5F0E8; --card-ink: #1A1814; --card-accent: #E83B2A; }
+
+  .card-stripe {
+    height: 6px;
+    background: repeating-linear-gradient(90deg,
+      var(--card-accent) 0px, var(--card-accent) 16px,
+      var(--card-ink) 16px, var(--card-ink) 32px,
+      var(--gold) 32px, var(--gold) 48px,
+      var(--card-ink) 48px, var(--card-ink) 64px
+    );
+  }
+  .card-inner {
+    background: var(--card-bg);
+    padding: 12px 14px;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .card-exhibition {
+    font-size: 7px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--card-accent);
+    margin-bottom: 2px;
+  }
+  .card-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--card-ink);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .card-num {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--card-accent);
+    letter-spacing: 1px;
+  }
+
+  .hole-row {
+    display: flex;
+    gap: 4px;
+    padding: 6px 0;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+  }
+  .hole {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.12);
+  }
+  .hole.punched {
+    background: var(--card-accent);
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  }
+
+  .card-quote {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--card-ink);
+    line-height: 1.5;
+    margin-bottom: 8px;
+    padding-left: 8px;
+    border-left: 2px solid var(--card-accent);
+  }
+  .card-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .card-tag {
+    font-size: 7px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border: 1px solid var(--card-accent);
+    border-radius: 1px;
+    color: var(--card-accent);
+  }
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+  }
+  .card-time {
+    font-size: 8px;
+    color: rgba(0,0,0,0.4);
+    letter-spacing: 0.5px;
+  }
+  .card-type {
+    font-size: 8px;
+    font-weight: 600;
+    color: var(--card-accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* 하단 카운터 */
+  .display-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: linear-gradient(to top, rgba(13,13,11,0.95) 0%, transparent 100%);
+  }
+  .counter {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(245,240,232,0.3);
+    text-transform: uppercase;
+  }
+  .counter span {
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .qr-hint {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(245,240,232,0.3);
+    text-transform: uppercase;
+  }
+  .qr-hint em {
+    color: var(--punch);
+    font-style: normal;
+  }
+</style>
+</head>
+<body>
+
+<div class="display-header">
+  <div>
+    <div class="display-title">PUNCHED IN</div>
+    <div class="display-subtitle">Bloc Gallery · Apr 13–17, 2026</div>
+  </div>
+  <div class="live-indicator">
+    <div class="live-dot"></div>
+    Live Archive
+  </div>
+</div>
+
+<div id="cardStage"></div>
+
+<div class="display-footer">
+  <div class="counter">Visitors logged: <span id="totalCount">0</span></div>
+  <div class="qr-hint">Scan QR to <em>Punch In</em></div>
+</div>
+
+<script>
+  // Google Sheets 공개 읽기용 설정
+  // 소미 — 여기 SHEET_ID는 자동으로 맞게 들어가 있어
+  const SHEET_ID = '1C04UPwBT2Pbzy9Oxc7WOeI1N0_YCDuAVWVzeixeddhg';
+  const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
+
+  let allCards = [];
+  let displayedIds = new Set();
+
+  // 역할에 따른 CSS 클래스
+  function getRoleClass(role) {
+    if (!role) return 'role-default';
+    const r = role.toLowerCase();
+    if (r.includes('student')) return 'role-student';
+    if (r.includes('faculty')) return 'role-faculty';
+    if (r.includes('artist')) return 'role-artist';
+    if (r.includes('outside')) return 'role-outside';
+    return 'role-default';
+  }
+
+  // 펀치 구멍 생성
+  function makeHoles(seed) {
+    let html = '';
+    for (let i = 0; i < 12; i++) {
+      const punched = ((seed >> i) & 1) ? ' punched' : '';
+      html += `<div class="hole${punched}"></div>`;
+    }
+    return html;
+  }
+
+  // AI 분석 결과에서 데이터 파싱
+  function parseResult(resultText) {
+    try {
+      const clean = resultText.replace(/```json|```/g, '').trim();
+      return JSON.parse(clean);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // 카드를 화면에 배치
+  function placeCard(cardData, index) {
+    const stage = document.getElementById('cardStage');
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    const parsed = parseResult(cardData.result);
+    if (!parsed) return;
+
+    const roleClass = getRoleClass(cardData.role);
+    const seed = parsed.seed || Math.floor(Math.random() * 4095);
+    const rot = (Math.random() * 6 - 3).toFixed(1);
+    const duration = (8 + Math.random() * 6).toFixed(1);
+    const delay = (Math.random() * 4).toFixed(1);
+
+    // 겹치지 않게 위치 잡기
+    const col = index % 4;
+    const row = Math.floor(index / 4) % 3;
+    const x = 60 + col * (w / 4) + (Math.random() * 40 - 20);
+    const y = 100 + row * ((h - 200) / 3) + (Math.random() * 30 - 15);
+
+    const tags = (parsed.tags || []).slice(0, 3).map(t =>
+      `<div class="card-tag">${t}</div>`
+    ).join('');
+
+    const timeStr = new Date(cardData.timestamp).toLocaleTimeString('en-US', {
+      hour: '2-digit', minute: '2-digit'
+    });
+
+    const card = document.createElement('div');
+    card.className = `float-card ${roleClass}`;
+    card.style.cssText = `
+      left: ${x}px;
+      top: ${y}px;
+      --rot: ${rot}deg;
+      --duration: ${duration}s;
+      --delay: -${delay}s;
+    `;
+    card.innerHTML = `
+      <div class="card-stripe"></div>
+      <div class="card-inner">
+        <div class="card-top">
+          <div>
+            <div class="card-exhibition">CJR · Punched In</div>
+            <div class="card-name">${cardData.nickname || 'Anonymous'}</div>
+          </div>
+          <div class="card-num">#${String(index + 1).padStart(4, '0')}</div>
+        </div>
+        <div class="hole-row">${makeHoles(seed)}</div>
+        <div class="card-quote">${parsed.key_quote || ''}</div>
+        <div class="card-tags">${tags}</div>
+        <div class="card-footer">
+          <div class="card-time">${timeStr}</div>
+          <div class="card-type">${parsed.visitor_type || ''}</div>
+        </div>
+      </div>
+    `;
+
+    stage.appendChild(card);
+    setTimeout(() => card.classList.add('visible'), 100);
+  }
+
+  // Sheets에서 데이터 가져오기
+  async function fetchData() {
+    try {
+      const res = await fetch(SHEET_URL);
+      const text = await res.text();
+      const json = JSON.parse(text.replace('/*O_o*/', '').replace('google.visualization.Query.setResponse(', '').replace(/\);$/, ''));
+
+      const rows = json.table.rows || [];
+      const newCards = [];
+
+      rows.forEach((row, i) => {
+        const cols = row.c || [];
+        const id = i;
+        if (displayedIds.has(id)) return;
+
+        const timestamp = cols[0]?.v || '';
+        const nickname = cols[1]?.v || 'Anonymous';
+        const role = cols[2]?.v || '';
+        const language = cols[3]?.v || '';
+        const response = cols[4]?.v || '';
+        const result = cols[5]?.v || '';
+
+        if (result) {
+          newCards.push({ id, timestamp, nickname, role, language, response, result });
+        }
+      });
+
+      newCards.forEach((card, i) => {
+        displayedIds.add(card.id);
+        allCards.push(card);
+        setTimeout(() => placeCard(card, allCards.length - 1), i * 300);
+      });
+
+      document.getElementById('totalCount').textContent = allCards.length;
+
+    } catch (e) {
+      console.error('Fetch error:', e);
+    }
+  }
+
+  // 처음 로드 + 30초마다 업데이트
+  fetchData();
+  setInterval(fetchData, 30000);
+</script>
+</body>
+</html>
