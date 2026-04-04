@@ -284,7 +284,7 @@
 
 <script>
   // Google Sheets 공개 읽기용 설정
-  // 소미 — 여기 SHEET_ID는 자동으로 맞게 들어가 있어
+  // 여기 SHEET_ID는 자동으로 맞게 들어가 있어
   const SHEET_ID = '1C04UPwBT2Pbzy9Oxc7WOeI1N0_YCDuAVWVzeixeddhg';
   const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
 
@@ -337,11 +337,18 @@
     const duration = (8 + Math.random() * 6).toFixed(1);
     const delay = (Math.random() * 4).toFixed(1);
 
-    // 겹치지 않게 위치 잡기
-    const col = index % 4;
-    const row = Math.floor(index / 4) % 3;
-    const x = 60 + col * (w / 4) + (Math.random() * 40 - 20);
-    const y = 100 + row * ((h - 200) / 3) + (Math.random() * 30 - 15);
+    // 화면을 구역으로 나눠서 고르게 배치
+    const zones = [
+      { xMin: 0.05, xMax: 0.30, yMin: 0.10, yMax: 0.45 },
+      { xMin: 0.35, xMax: 0.60, yMin: 0.10, yMax: 0.45 },
+      { xMin: 0.65, xMax: 0.90, yMin: 0.10, yMax: 0.45 },
+      { xMin: 0.05, xMax: 0.30, yMin: 0.55, yMax: 0.88 },
+      { xMin: 0.35, xMax: 0.60, yMin: 0.55, yMax: 0.88 },
+      { xMin: 0.65, xMax: 0.90, yMin: 0.55, yMax: 0.88 },
+    ];
+    const zone = zones[index % zones.length];
+    const x = w * (zone.xMin + Math.random() * (zone.xMax - zone.xMin));
+    const y = h * (zone.yMin + Math.random() * (zone.yMax - zone.yMin));
 
     const tags = (parsed.tags || []).slice(0, 3).map(t =>
       `<div class="card-tag">${t}</div>`
