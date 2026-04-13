@@ -6,66 +6,28 @@
 <title>PUNCHED IN — Live Display</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #D6EAF8;
-    --punch: #E83B2A;
-    --gold: #C8A84B;
-    --font-mono: 'IBM Plex Mono', monospace;
-    --font-sans: 'IBM Plex Sans', sans-serif;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: var(--font-mono);
-    background: var(--bg);
-    overflow: hidden;
-    width: 100vw;
-    height: 100vh;
-  }
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .display-header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    padding: 20px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
-    background: linear-gradient(to bottom, rgba(13,13,11,0.95) 0%, transparent 100%);
-  }
-  .display-title { font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); }
-  .display-subtitle { font-size: 11px; letter-spacing: 2px; color: rgba(245,240,232,0.3); text-transform: uppercase; }
-  .live-indicator { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 2px; color: rgba(245,240,232,0.4); text-transform: uppercase; }
-  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--punch); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(0.8);} }
+  :root { --bg:#D6EAF8; --punch:#E83B2A; --gold:#C8A84B; --font-mono:'IBM Plex Mono',monospace; --font-sans:'IBM Plex Sans',sans-serif; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:var(--font-mono); background:var(--bg); overflow:hidden; width:100vw; height:100vh; }
+  body::before { content:''; position:fixed; inset:0; background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.012) 2px,rgba(255,255,255,0.012) 4px); pointer-events:none; z-index:0; }
 
-  #cardStage { position: fixed; inset: 0; z-index: 1; }
+  .display-header { position:fixed; top:0; left:0; right:0; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; z-index:100; background:linear-gradient(to bottom,rgba(13,13,11,0.95) 0%,transparent 100%); }
+  .display-title { font-size:13px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); }
+  .display-subtitle { font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.3); text-transform:uppercase; }
+  .live-indicator { display:flex; align-items:center; gap:8px; font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.4); text-transform:uppercase; }
+  .live-dot { width:7px; height:7px; border-radius:50%; background:var(--punch); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);} }
 
-  .float-card {
-    position: absolute;
-    width: 250px;
-    border-radius: 2px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    opacity: 0;
-    transition: opacity 1.2s ease;
-  }
-  .float-card.visible {
-    opacity: 1;
-    animation: floatBig var(--dur) ease-in-out infinite var(--dly);
-  }
+  #cardStage { position:fixed; inset:0; z-index:1; }
+
+  .float-card { position:absolute; width:250px; border-radius:2px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.5); opacity:0; transition:opacity 1.2s ease; }
+  .float-card.visible { opacity:1; animation:floatBig var(--dur) ease-in-out infinite var(--dly); }
   @keyframes floatBig {
-    0%   { transform: translateY(0px)   rotate(var(--rot)); }
-    25%  { transform: translateY(-55px) rotate(calc(var(--rot) + 0.8deg)); }
-    50%  { transform: translateY(-20px) rotate(calc(var(--rot) - 0.5deg)); }
-    75%  { transform: translateY(-65px) rotate(calc(var(--rot) + 1.2deg)); }
-    100% { transform: translateY(0px)   rotate(var(--rot)); }
+    0%   { transform:translateY(0px)   rotate(var(--rot)); }
+    25%  { transform:translateY(-55px) rotate(calc(var(--rot) + 0.8deg)); }
+    50%  { transform:translateY(-20px) rotate(calc(var(--rot) - 0.5deg)); }
+    75%  { transform:translateY(-65px) rotate(calc(var(--rot) + 1.2deg)); }
+    100% { transform:translateY(0px)   rotate(var(--rot)); }
   }
 
   .float-card.role-student { --card-bg:#C8D8E8; --card-ink:#1A2A3A; --card-accent:#2A5A8A; }
@@ -74,8 +36,8 @@
   .float-card.role-outside { --card-bg:#D0C8E8; --card-ink:#1A1A2A; --card-accent:#4A2A8A; }
   .float-card.role-default { --card-bg:#F5F0E8; --card-ink:#1A1814; --card-accent:#E83B2A; }
 
-  .card-stripe { height:6px; background: repeating-linear-gradient(90deg, var(--card-accent) 0px, var(--card-accent) 16px, var(--card-ink) 16px, var(--card-ink) 32px, var(--gold) 32px, var(--gold) 48px, var(--card-ink) 48px, var(--card-ink) 64px); }
-  .card-inner { background: var(--card-bg); padding: 12px 14px; }
+  .card-stripe { height:6px; background:repeating-linear-gradient(90deg,var(--card-accent) 0px,var(--card-accent) 16px,var(--card-ink) 16px,var(--card-ink) 32px,var(--gold) 32px,var(--gold) 48px,var(--card-ink) 48px,var(--card-ink) 64px); }
+  .card-inner { background:var(--card-bg); padding:12px 14px; }
   .card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
   .card-exhibition { font-size:7px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--card-accent); margin-bottom:2px; }
   .card-name { font-size:13px; font-weight:600; color:var(--card-ink); letter-spacing:0.5px; text-transform:uppercase; }
@@ -90,16 +52,7 @@
   .card-time { font-size:8px; color:rgba(0,0,0,0.4); letter-spacing:0.5px; }
   .card-type { font-size:8px; font-weight:600; color:var(--card-accent); letter-spacing:1px; text-transform:uppercase; }
 
-  .display-footer {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    padding: 20px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
-    background: linear-gradient(to top, rgba(13,13,11,0.95) 0%, transparent 100%);
-  }
+  .display-footer { position:fixed; bottom:0; left:0; right:0; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; z-index:100; background:linear-gradient(to top,rgba(13,13,11,0.95) 0%,transparent 100%); }
   .counter { font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.3); text-transform:uppercase; }
   .counter span { color:var(--gold); font-weight:600; }
   .qr-hint { font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.3); text-transform:uppercase; }
@@ -107,16 +60,12 @@
 </style>
 </head>
 <body>
-
 <div class="display-header">
   <div>
     <div class="display-title">PUNCHED IN</div>
     <div class="display-subtitle">Bloc Gallery · Apr 13–17, 2026</div>
   </div>
-  <div class="live-indicator">
-    <div class="live-dot"></div>
-    Live Archive
-  </div>
+  <div class="live-indicator"><div class="live-dot"></div>Live Archive</div>
 </div>
 
 <div id="cardStage"></div>
@@ -130,27 +79,29 @@
   const SHEET_ID = '1C04UPwBT2Pbzy9Oxc7WOeI1N0_YCDuAVWVzeixeddhg';
   const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
 
-  let totalPlaced = 0;
   let displayedIds = new Set();
+  let totalPlaced = 0;
 
-  // 화면을 3×3 = 9구역으로 나눔, vw/vh 단위
-  const GRID = [
-    [ 2, 25,  12, 38],  // 좌상
-    [32, 55,  12, 38],  // 중상
-    [62, 80,  12, 38],  // 우상
-    [ 2, 25,  43, 62],  // 좌중
-    [32, 55,  43, 62],  // 중중
-    [62, 80,  43, 62],  // 우중
-    [ 2, 25,  66, 84],  // 좌하
-    [32, 55,  66, 84],  // 중하
-    [62, 80,  66, 84],  // 우하
+  // ─── 9구역 배치 (vw/vh 단위) ───
+  // 화면을 3×3으로 나눔. 헤더/푸터 제외.
+  const ZONES = [
+    [ 2, 25,  13, 35],  // 0: 좌상
+    [32, 55,  13, 35],  // 1: 중상
+    [62, 78,  13, 35],  // 2: 우상
+    [ 2, 25,  40, 60],  // 3: 좌중
+    [32, 55,  40, 60],  // 4: 중중
+    [62, 78,  40, 60],  // 5: 우중
+    [ 2, 25,  65, 82],  // 6: 좌하
+    [32, 55,  65, 82],  // 7: 중하
+    [62, 78,  65, 82],  // 8: 우하
   ];
 
-  function getPosition(index) {
-    const zone = GRID[index % GRID.length];
-    const left = (zone[0] + Math.random() * (zone[1] - zone[0])).toFixed(1);
-    const top  = (zone[2] + Math.random() * (zone[3] - zone[2])).toFixed(1);
-    return { left: left + 'vw', top: top + 'vh' };
+  function getPos(idx) {
+    const z = ZONES[idx % ZONES.length];
+    return {
+      left: (z[0] + Math.random() * (z[1] - z[0])).toFixed(1) + 'vw',
+      top:  (z[2] + Math.random() * (z[3] - z[2])).toFixed(1) + 'vh'
+    };
   }
 
   function getRoleClass(role) {
@@ -164,70 +115,61 @@
   }
 
   function makeHoles(seed) {
-    let html = '';
-    for (let i = 0; i < 12; i++) {
-      html += `<div class="hole${((seed >> i) & 1) ? ' punched' : ''}"></div>`;
-    }
-    return html;
+    let h = '';
+    for (let i = 0; i < 12; i++) h += `<div class="hole${((seed>>i)&1)?' punched':''}"></div>`;
+    return h;
   }
 
-  function parseResult(resultText) {
-    if (!resultText) return null;
-    try { return JSON.parse(resultText.replace(/```json|```/g, '').trim()); }
-    catch (e) { return null; }
+  function parseResult(t) {
+    if (!t) return null;
+    try { return JSON.parse(t.replace(/```json|```/g,'').trim()); }
+    catch(e) { return null; }
   }
 
-  function placeCard(cardData, cardIndex) {
+  // ─── 핵심: idx를 파라미터로 직접 받음 ───
+  // setTimeout 클로저 문제 없음
+  function placeCard(cardData, idx) {
     const parsed = parseResult(cardData.result);
     if (!parsed) return;
 
-    const pos       = getPosition(cardIndex);
-    const roleClass = getRoleClass(cardData.role);
-    const seed      = parsed.seed || Math.floor(Math.random() * 4095);
-    const rot       = (Math.random() * 10 - 5).toFixed(1) + 'deg';
-    const dur       = (7 + Math.random() * 5).toFixed(1) + 's';
-    const dly       = '-' + (Math.random() * 10).toFixed(1) + 's';
+    const pos  = getPos(idx);
+    const seed = parsed.seed || Math.floor(Math.random() * 4095);
+    const rot  = (Math.random() * 10 - 5).toFixed(1) + 'deg';
+    const dur  = (7 + Math.random() * 5).toFixed(1) + 's';
+    const dly  = '-' + (Math.random() * 10).toFixed(1) + 's';
 
-    const tags = (parsed.tags || []).slice(0, 3)
-      .map(t => `<div class="card-tag">${t}</div>`).join('');
+    const tags = (parsed.tags||[]).slice(0,3).map(t=>`<div class="card-tag">${t}</div>`).join('');
+    const time = cardData.timestamp ? new Date(cardData.timestamp).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '';
+    const name = (cardData.nickname && String(cardData.nickname).trim()) ? String(cardData.nickname).trim() : 'Anonymous';
 
-    const timeStr = cardData.timestamp
-      ? new Date(cardData.timestamp).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' })
-      : '';
-
-    const displayName = (cardData.nickname && String(cardData.nickname).trim())
-      ? String(cardData.nickname).trim()
-      : 'Anonymous';
-
-    const card = document.createElement('div');
-    card.className = `float-card ${roleClass}`;
-    card.style.left = pos.left;
-    card.style.top  = pos.top;
-    card.style.setProperty('--rot', rot);
-    card.style.setProperty('--dur', dur);
-    card.style.setProperty('--dly', dly);
-
-    card.innerHTML = `
+    const el = document.createElement('div');
+    el.className = `float-card ${getRoleClass(cardData.role)}`;
+    el.style.left = pos.left;
+    el.style.top  = pos.top;
+    el.style.setProperty('--rot', rot);
+    el.style.setProperty('--dur', dur);
+    el.style.setProperty('--dly', dly);
+    el.innerHTML = `
       <div class="card-stripe"></div>
       <div class="card-inner">
         <div class="card-top">
           <div>
             <div class="card-exhibition">CJR · Punched In</div>
-            <div class="card-name">${displayName}</div>
+            <div class="card-name">${name}</div>
           </div>
-          <div class="card-num">#${String(cardIndex + 1).padStart(4, '0')}</div>
+          <div class="card-num">#${String(idx+1).padStart(4,'0')}</div>
         </div>
         <div class="hole-row">${makeHoles(seed)}</div>
-        <div class="card-quote">${parsed.key_quote || ''}</div>
+        <div class="card-quote">${parsed.key_quote||''}</div>
         <div class="card-tags">${tags}</div>
         <div class="card-footer">
-          <div class="card-time">${timeStr}</div>
-          <div class="card-type">${parsed.visitor_type || ''}</div>
+          <div class="card-time">${time}</div>
+          <div class="card-type">${parsed.visitor_type||''}</div>
         </div>
       </div>`;
 
-    document.getElementById('cardStage').appendChild(card);
-    setTimeout(() => card.classList.add('visible'), 120);
+    document.getElementById('cardStage').appendChild(el);
+    setTimeout(() => el.classList.add('visible'), 120);
   }
 
   async function fetchData() {
@@ -235,47 +177,37 @@
       const res  = await fetch(SHEET_URL + '&t=' + Date.now());
       const text = await res.text();
       const json = JSON.parse(
-        text.replace('/*O_o*/','')
-            .replace('google.visualization.Query.setResponse(','')
-            .replace(/\);$/,'')
+        text.replace('/*O_o*/','').replace('google.visualization.Query.setResponse(','').replace(/\);$/,'')
       );
 
       const rows = json.table?.rows || [];
-      const newCards = [];
 
       rows.forEach((row, i) => {
         if (displayedIds.has(i)) return;
         const c = row.c || [];
         const result = c[5]?.v ?? '';
         if (!result) return;
-        newCards.push({
-          id:        i,
+
+        displayedIds.add(i);
+
+        // ─── idx를 즉시 캡처해서 클로저에 전달 ───
+        const idx = totalPlaced;
+        totalPlaced++;
+
+        // 딜레이를 줘서 카드가 하나씩 등장
+        setTimeout(() => placeCard({
           timestamp: c[0]?.v ?? '',
           nickname:  c[1]?.v ?? '',
           role:      c[2]?.v ?? '',
           language:  c[3]?.v ?? '',
           response:  c[4]?.v ?? '',
           result
-        });
-      });
-
-      // ─── 핵심 수정 ───
-      // 이전 코드: placeCard(card, allCards.length - 1)
-      // 문제: setTimeout 클로저 안에서 allCards.length가 
-      //       이미 최종값(6)으로 고정되어 모든 카드가 같은 index를 받음
-      // 수정: 카드를 추가하기 전에 index를 미리 변수에 저장
-      newCards.forEach((card, i) => {
-        displayedIds.add(card.id);
-        const cardIndex = totalPlaced; // 지금 이 시점의 값을 캡처
-        totalPlaced++;
-        setTimeout(() => placeCard(card, cardIndex), i * 500);
+        }, idx), idx * 400);
       });
 
       document.getElementById('totalCount').textContent = totalPlaced;
 
-    } catch(e) {
-      console.error('Fetch error:', e);
-    }
+    } catch(e) { console.error(e); }
   }
 
   fetchData();
