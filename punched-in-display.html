@@ -13,30 +13,22 @@
     --font-mono: 'IBM Plex Mono', monospace;
     --font-sans: 'IBM Plex Sans', sans-serif;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     font-family: var(--font-mono);
     background: var(--bg);
     overflow: hidden;
     width: 100vw;
     height: 100vh;
-    position: relative;
   }
-
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background-image: repeating-linear-gradient(
-      0deg, transparent, transparent 2px,
-      rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px
-    );
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px);
     pointer-events: none;
     z-index: 0;
   }
-
   .display-header {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -47,43 +39,13 @@
     z-index: 100;
     background: linear-gradient(to bottom, rgba(13,13,11,0.95) 0%, transparent 100%);
   }
-  .display-title {
-    font-size: 13px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--gold);
-  }
-  .display-subtitle {
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: rgba(245,240,232,0.3);
-    text-transform: uppercase;
-  }
-  .live-indicator {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: rgba(245,240,232,0.4);
-    text-transform: uppercase;
-  }
-  .live-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--punch);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-  }
+  .display-title { font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); }
+  .display-subtitle { font-size: 11px; letter-spacing: 2px; color: rgba(245,240,232,0.3); text-transform: uppercase; }
+  .live-indicator { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 2px; color: rgba(245,240,232,0.4); text-transform: uppercase; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--punch); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(0.8);} }
 
-  #cardStage {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-  }
+  #cardStage { position: fixed; inset: 0; z-index: 1; }
 
   .float-card {
     position: absolute;
@@ -92,112 +54,42 @@
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     opacity: 0;
-    transform: rotate(var(--rot));
     transition: opacity 1.2s ease;
+    /* left/top은 JS에서 vw/vh 단위로 직접 설정 */
   }
   .float-card.visible {
     opacity: 1;
     animation: floatBig var(--dur) ease-in-out infinite var(--dly);
   }
-
   @keyframes floatBig {
     0%   { transform: translateY(0px)   rotate(var(--rot)); }
-    30%  { transform: translateY(-50px) rotate(calc(var(--rot) + 0.6deg)); }
-    60%  { transform: translateY(-25px) rotate(calc(var(--rot) - 0.4deg)); }
-    80%  { transform: translateY(-60px) rotate(calc(var(--rot) + 1deg)); }
+    25%  { transform: translateY(-55px) rotate(calc(var(--rot) + 0.8deg)); }
+    50%  { transform: translateY(-20px) rotate(calc(var(--rot) - 0.5deg)); }
+    75%  { transform: translateY(-65px) rotate(calc(var(--rot) + 1.2deg)); }
     100% { transform: translateY(0px)   rotate(var(--rot)); }
   }
 
-  .float-card.role-student { --card-bg: #C8D8E8; --card-ink: #1A2A3A; --card-accent: #2A5A8A; }
-  .float-card.role-faculty { --card-bg: #E8D08A; --card-ink: #2A1A08; --card-accent: #8A5A10; }
-  .float-card.role-artist  { --card-bg: #E8C8D0; --card-ink: #2A1A1E; --card-accent: #8A2A4A; }
-  .float-card.role-outside { --card-bg: #D0C8E8; --card-ink: #1A1A2A; --card-accent: #4A2A8A; }
-  .float-card.role-default { --card-bg: #F5F0E8; --card-ink: #1A1814; --card-accent: #E83B2A; }
+  .float-card.role-student { --card-bg:#C8D8E8; --card-ink:#1A2A3A; --card-accent:#2A5A8A; }
+  .float-card.role-faculty { --card-bg:#E8D08A; --card-ink:#2A1A08; --card-accent:#8A5A10; }
+  .float-card.role-artist  { --card-bg:#E8C8D0; --card-ink:#2A1A1E; --card-accent:#8A2A4A; }
+  .float-card.role-outside { --card-bg:#D0C8E8; --card-ink:#1A1A2A; --card-accent:#4A2A8A; }
+  .float-card.role-default { --card-bg:#F5F0E8; --card-ink:#1A1814; --card-accent:#E83B2A; }
 
-  .card-stripe {
-    height: 6px;
-    background: repeating-linear-gradient(90deg,
-      var(--card-accent) 0px, var(--card-accent) 16px,
-      var(--card-ink) 16px, var(--card-ink) 32px,
-      var(--gold) 32px, var(--gold) 48px,
-      var(--card-ink) 48px, var(--card-ink) 64px
-    );
-  }
-  .card-inner {
-    background: var(--card-bg);
-    padding: 12px 14px;
-  }
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
-  }
-  .card-exhibition {
-    font-size: 7px; font-weight: 600;
-    letter-spacing: 2px; text-transform: uppercase;
-    color: var(--card-accent); margin-bottom: 2px;
-  }
-  .card-name {
-    font-size: 13px; font-weight: 600;
-    color: var(--card-ink);
-    letter-spacing: 0.5px; text-transform: uppercase;
-  }
-  .card-num {
-    font-size: 10px; font-weight: 600;
-    color: var(--card-accent); letter-spacing: 1px;
-  }
-  .hole-row {
-    display: flex; gap: 4px;
-    padding: 6px 0;
-    border-top: 1px solid rgba(0,0,0,0.1);
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    margin-bottom: 10px;
-  }
-  .hole {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.12);
-  }
-  .hole.punched {
-    background: var(--card-accent);
-    box-shadow: 0 0 4px rgba(0,0,0,0.3);
-  }
-  .card-quote {
-    font-family: var(--font-sans);
-    font-size: 12px; font-weight: 500;
-    color: var(--card-ink); line-height: 1.5;
-    margin-bottom: 8px;
-    padding-left: 8px;
-    border-left: 2px solid var(--card-accent);
-  }
-  .card-tags {
-    display: flex; gap: 4px; flex-wrap: wrap;
-    margin-bottom: 8px;
-  }
-  .card-tag {
-    font-size: 7px; letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 2px 6px;
-    border: 1px solid var(--card-accent);
-    border-radius: 1px;
-    color: var(--card-accent);
-  }
-  .card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 8px;
-    border-top: 1px solid rgba(0,0,0,0.1);
-  }
-  .card-time {
-    font-size: 8px; color: rgba(0,0,0,0.4); letter-spacing: 0.5px;
-  }
-  .card-type {
-    font-size: 8px; font-weight: 600;
-    color: var(--card-accent);
-    letter-spacing: 1px; text-transform: uppercase;
-  }
+  .card-stripe { height:6px; background: repeating-linear-gradient(90deg, var(--card-accent) 0px, var(--card-accent) 16px, var(--card-ink) 16px, var(--card-ink) 32px, var(--gold) 32px, var(--gold) 48px, var(--card-ink) 48px, var(--card-ink) 64px); }
+  .card-inner { background: var(--card-bg); padding: 12px 14px; }
+  .card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+  .card-exhibition { font-size:7px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--card-accent); margin-bottom:2px; }
+  .card-name { font-size:13px; font-weight:600; color:var(--card-ink); letter-spacing:0.5px; text-transform:uppercase; }
+  .card-num { font-size:10px; font-weight:600; color:var(--card-accent); letter-spacing:1px; }
+  .hole-row { display:flex; gap:4px; padding:6px 0; border-top:1px solid rgba(0,0,0,0.1); border-bottom:1px solid rgba(0,0,0,0.1); margin-bottom:10px; }
+  .hole { width:6px; height:6px; border-radius:50%; background:rgba(0,0,0,0.12); }
+  .hole.punched { background:var(--card-accent); box-shadow:0 0 4px rgba(0,0,0,0.3); }
+  .card-quote { font-family:var(--font-sans); font-size:12px; font-weight:500; color:var(--card-ink); line-height:1.5; margin-bottom:8px; padding-left:8px; border-left:2px solid var(--card-accent); }
+  .card-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
+  .card-tag { font-size:7px; letter-spacing:1px; text-transform:uppercase; padding:2px 6px; border:1px solid var(--card-accent); border-radius:1px; color:var(--card-accent); }
+  .card-footer { display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px solid rgba(0,0,0,0.1); }
+  .card-time { font-size:8px; color:rgba(0,0,0,0.4); letter-spacing:0.5px; }
+  .card-type { font-size:8px; font-weight:600; color:var(--card-accent); letter-spacing:1px; text-transform:uppercase; }
 
   .display-footer {
     position: fixed;
@@ -209,16 +101,10 @@
     z-index: 100;
     background: linear-gradient(to top, rgba(13,13,11,0.95) 0%, transparent 100%);
   }
-  .counter {
-    font-size: 11px; letter-spacing: 2px;
-    color: rgba(245,240,232,0.3); text-transform: uppercase;
-  }
-  .counter span { color: var(--gold); font-weight: 600; }
-  .qr-hint {
-    font-size: 11px; letter-spacing: 2px;
-    color: rgba(245,240,232,0.3); text-transform: uppercase;
-  }
-  .qr-hint em { color: var(--punch); font-style: normal; }
+  .counter { font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.3); text-transform:uppercase; }
+  .counter span { color:var(--gold); font-weight:600; }
+  .qr-hint { font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.3); text-transform:uppercase; }
+  .qr-hint em { color:var(--punch); font-style:normal; }
 </style>
 </head>
 <body>
@@ -245,60 +131,40 @@
   const SHEET_ID = '1C04UPwBT2Pbzy9Oxc7WOeI1N0_YCDuAVWVzeixeddhg';
   const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
 
-  const CARD_W = 260;
-  const CARD_H = 215;
-  const TOP_PAD = 85;
-  const BOT_PAD = 85;
-
   let allCards = [];
   let displayedIds = new Set();
 
-  // ─── 슬롯 방식: 화면을 격자로 나누고 각 칸에 카드 1장씩 ───
-  // 이 함수는 카드가 들어갈 수 있는 모든 위치(슬롯)를 미리 계산함
-  function buildSlots() {
-    const W = window.innerWidth;
-    const H = window.innerHeight;
-    const usableH = H - TOP_PAD - BOT_PAD;
+  // ─── 위치 계산: vw/vh % 기반, JS 픽셀 계산 없음 ───
+  // 화면을 3열 × 3행 = 9구역으로 나눔
+  // 각 구역 안에서 랜덤 오프셋 적용
+  // 헤더(10vh)와 푸터(10vh) 제외 → 유효 영역: 10vh ~ 88vh
+  const GRID = [
+    // [leftMin%, leftMax%, topMin%, topMax%]  — 9 구역
+    [ 2, 25,  12, 38],  // 0: 좌상
+    [30, 53,  12, 38],  // 1: 중상
+    [58, 78,  12, 38],  // 2: 우상
+    [ 2, 25,  42, 62],  // 3: 좌중
+    [30, 53,  42, 62],  // 4: 중중
+    [58, 78,  42, 62],  // 5: 우중
+    [ 2, 25,  65, 84],  // 6: 좌하
+    [30, 53,  65, 84],  // 7: 중하
+    [58, 78,  65, 84],  // 8: 우하
+  ];
 
-    // 가로/세로 몇 칸 들어가나 (최소 여백 20px 포함)
-    const cols = Math.max(2, Math.floor(W / (CARD_W + 20)));
-    const rows = Math.max(2, Math.floor(usableH / (CARD_H + 20)));
-
-    // 각 셀의 실제 픽셀 크기
-    const cellW = W / cols;
-    const cellH = usableH / rows;
-
-    const slots = [];
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        // 셀 왼쪽 상단 기준으로 카드를 놓을 수 있는 범위 계산
-        const maxX = cellW - CARD_W - 10;
-        const maxY = cellH - CARD_H - 10;
-        slots.push({
-          x: c * cellW + 10 + Math.random() * Math.max(0, maxX),
-          y: TOP_PAD + r * cellH + 10 + Math.random() * Math.max(0, maxY)
-        });
-      }
-    }
-
-    // Fisher-Yates 셔플 — 카드가 좌→우, 위→아래 순서가 아니라 무작위로 채워지도록
-    for (let i = slots.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [slots[i], slots[j]] = [slots[j], slots[i]];
-    }
-
-    return slots;
+  function getPosition(cardIndex) {
+    // 카드 번호를 구역에 순환 배정 (0→구역0, 1→구역1, ... 9→구역0, ...)
+    const zone = GRID[cardIndex % GRID.length];
+    const leftPct = zone[0] + Math.random() * (zone[1] - zone[0]);
+    const topPct  = zone[2] + Math.random() * (zone[3] - zone[2]);
+    return { left: leftPct.toFixed(1) + 'vw', top: topPct.toFixed(1) + 'vh' };
   }
-
-  // 슬롯 목록 (페이지 로드 시 한 번 계산)
-  let slots = buildSlots();
 
   function getRoleClass(role) {
     if (!role) return 'role-default';
     const r = role.toLowerCase();
     if (r.includes('student')) return 'role-student';
     if (r.includes('faculty')) return 'role-faculty';
-    if (r.includes('artist')) return 'role-artist';
+    if (r.includes('artist'))  return 'role-artist';
     if (r.includes('outside')) return 'role-outside';
     return 'role-default';
   }
@@ -306,42 +172,33 @@
   function makeHoles(seed) {
     let html = '';
     for (let i = 0; i < 12; i++) {
-      const punched = ((seed >> i) & 1) ? ' punched' : '';
-      html += `<div class="hole${punched}"></div>`;
+      html += `<div class="hole${((seed >> i) & 1) ? ' punched' : ''}"></div>`;
     }
     return html;
   }
 
   function parseResult(resultText) {
     if (!resultText) return null;
-    try {
-      return JSON.parse(resultText.replace(/```json|```/g, '').trim());
-    } catch (e) {
-      return null;
-    }
+    try { return JSON.parse(resultText.replace(/```json|```/g, '').trim()); }
+    catch (e) { return null; }
   }
 
   function placeCard(cardData, cardIndex) {
-    const stage = document.getElementById('cardStage');
     const parsed = parseResult(cardData.result);
     if (!parsed) return;
 
-    // 슬롯 순환: 카드가 슬롯보다 많아지면 처음부터 다시
-    const slot = slots[cardIndex % slots.length];
-    const x = Math.round(slot.x);
-    const y = Math.round(slot.y);
-
+    const pos      = getPosition(cardIndex);
     const roleClass = getRoleClass(cardData.role);
-    const seed = parsed.seed || Math.floor(Math.random() * 4095);
-    const rot  = (Math.random() * 10 - 5).toFixed(2) + 'deg';
-    const dur  = (7 + Math.random() * 5).toFixed(1) + 's';
-    const dly  = '-' + (Math.random() * 10).toFixed(1) + 's';
+    const seed     = parsed.seed || Math.floor(Math.random() * 4095);
+    const rot      = (Math.random() * 10 - 5).toFixed(1) + 'deg';
+    const dur      = (7 + Math.random() * 5).toFixed(1) + 's';
+    const dly      = '-' + (Math.random() * 10).toFixed(1) + 's';
 
     const tags = (parsed.tags || []).slice(0, 3)
       .map(t => `<div class="card-tag">${t}</div>`).join('');
 
     const timeStr = cardData.timestamp
-      ? new Date(cardData.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      ? new Date(cardData.timestamp).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' })
       : '';
 
     const displayName = (cardData.nickname && String(cardData.nickname).trim())
@@ -350,13 +207,12 @@
 
     const card = document.createElement('div');
     card.className = `float-card ${roleClass}`;
-    card.setAttribute('style', [
-      `left:${x}px`,
-      `top:${y}px`,
-      `--rot:${rot}`,
-      `--dur:${dur}`,
-      `--dly:${dly}`
-    ].join(';'));
+    // vw/vh 단위로 직접 설정 — 픽셀 계산 없음
+    card.style.left = pos.left;
+    card.style.top  = pos.top;
+    card.style.setProperty('--rot', rot);
+    card.style.setProperty('--dur', dur);
+    card.style.setProperty('--dly', dly);
 
     card.innerHTML = `
       <div class="card-stripe"></div>
@@ -377,7 +233,7 @@
         </div>
       </div>`;
 
-    stage.appendChild(card);
+    document.getElementById('cardStage').appendChild(card);
     setTimeout(() => card.classList.add('visible'), 120);
   }
 
@@ -386,10 +242,7 @@
       const res  = await fetch(SHEET_URL + '&t=' + Date.now());
       const text = await res.text();
       const json = JSON.parse(
-        text
-          .replace('/*O_o*/', '')
-          .replace('google.visualization.Query.setResponse(', '')
-          .replace(/\);$/, '')
+        text.replace('/*O_o*/','').replace('google.visualization.Query.setResponse(','').replace(/\);$/,'')
       );
 
       const rows = json.table?.rows || [];
@@ -400,9 +253,8 @@
         const c = row.c || [];
         const result = c[5]?.v ?? '';
         if (!result) return;
-
         newCards.push({
-          id:        i,
+          id: i,
           timestamp: c[0]?.v ?? '',
           nickname:  c[1]?.v ?? '',
           role:      c[2]?.v ?? '',
@@ -419,15 +271,13 @@
       });
 
       document.getElementById('totalCount').textContent = allCards.length;
-
-    } catch (e) {
+    } catch(e) {
       console.error('Fetch error:', e);
     }
   }
 
   fetchData();
   setInterval(fetchData, 30000);
-  window.addEventListener('resize', () => { slots = buildSlots(); });
 </script>
 </body>
 </html>
