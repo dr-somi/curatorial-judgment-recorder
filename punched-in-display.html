@@ -25,7 +25,6 @@
     position: relative;
   }
 
-  /* 배경 스캔라인 */
   body::before {
     content: '';
     position: fixed;
@@ -38,12 +37,9 @@
     z-index: 0;
   }
 
-  /* 상단 헤더 */
   .display-header {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     padding: 20px 40px;
     display: flex;
     justify-content: space-between;
@@ -73,8 +69,7 @@
     text-transform: uppercase;
   }
   .live-dot {
-    width: 7px;
-    height: 7px;
+    width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--punch);
     animation: pulse 2s infinite;
@@ -84,42 +79,35 @@
     50% { opacity: 0.4; transform: scale(0.8); }
   }
 
-  /* 카드 컨테이너 */
   #cardStage {
     position: fixed;
     inset: 0;
     z-index: 1;
   }
 
-  /* ─── FIX 1 & 3: 더 넓게 퍼지고, 움직임도 훨씬 크게 ───
-     float animation의 translateY를 -40px ~ +20px 범위로 키움.
-     각 카드가 서로 다른 duration과 delay를 가져서 파도처럼 움직임. */
   .float-card {
     position: absolute;
-    width: 260px;
+    width: 250px;
     border-radius: 2px;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     opacity: 0;
-    transform: translateY(40px) rotate(var(--rot));
-    transition: opacity 1s ease, transform 1s ease;
+    transform: rotate(var(--rot));
+    transition: opacity 1.2s ease;
   }
   .float-card.visible {
     opacity: 1;
-    transform: translateY(0px) rotate(var(--rot));
-    animation: float var(--duration) ease-in-out infinite var(--delay);
+    animation: floatBig var(--dur) ease-in-out infinite var(--dly);
   }
 
-  /* FIX 3: 훨씬 큰 움직임 — 기존 -12px에서 -45px로 확대 */
-  @keyframes float {
+  @keyframes floatBig {
     0%   { transform: translateY(0px)   rotate(var(--rot)); }
-    25%  { transform: translateY(-45px) rotate(calc(var(--rot) + 0.5deg)); }
-    50%  { transform: translateY(-20px) rotate(calc(var(--rot) - 0.3deg)); }
-    75%  { transform: translateY(-55px) rotate(calc(var(--rot) + 0.8deg)); }
+    30%  { transform: translateY(-50px) rotate(calc(var(--rot) + 0.6deg)); }
+    60%  { transform: translateY(-25px) rotate(calc(var(--rot) - 0.4deg)); }
+    80%  { transform: translateY(-60px) rotate(calc(var(--rot) + 1deg)); }
     100% { transform: translateY(0px)   rotate(var(--rot)); }
   }
 
-  /* 역할별 카드 색상 */
   .float-card.role-student { --card-bg: #C8D8E8; --card-ink: #1A2A3A; --card-accent: #2A5A8A; }
   .float-card.role-faculty { --card-bg: #E8D08A; --card-ink: #2A1A08; --card-accent: #8A5A10; }
   .float-card.role-artist  { --card-bg: #E8C8D0; --card-ink: #2A1A1E; --card-accent: #8A2A4A; }
@@ -146,38 +134,28 @@
     margin-bottom: 8px;
   }
   .card-exhibition {
-    font-size: 7px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--card-accent);
-    margin-bottom: 2px;
+    font-size: 7px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--card-accent); margin-bottom: 2px;
   }
   .card-name {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 13px; font-weight: 600;
     color: var(--card-ink);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    letter-spacing: 0.5px; text-transform: uppercase;
   }
   .card-num {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--card-accent);
-    letter-spacing: 1px;
+    font-size: 10px; font-weight: 600;
+    color: var(--card-accent); letter-spacing: 1px;
   }
-
   .hole-row {
-    display: flex;
-    gap: 4px;
+    display: flex; gap: 4px;
     padding: 6px 0;
     border-top: 1px solid rgba(0,0,0,0.1);
     border-bottom: 1px solid rgba(0,0,0,0.1);
     margin-bottom: 10px;
   }
   .hole {
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     border-radius: 50%;
     background: rgba(0,0,0,0.12);
   }
@@ -185,26 +163,20 @@
     background: var(--card-accent);
     box-shadow: 0 0 4px rgba(0,0,0,0.3);
   }
-
   .card-quote {
     font-family: var(--font-sans);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--card-ink);
-    line-height: 1.5;
+    font-size: 12px; font-weight: 500;
+    color: var(--card-ink); line-height: 1.5;
     margin-bottom: 8px;
     padding-left: 8px;
     border-left: 2px solid var(--card-accent);
   }
   .card-tags {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
+    display: flex; gap: 4px; flex-wrap: wrap;
     margin-bottom: 8px;
   }
   .card-tag {
-    font-size: 7px;
-    letter-spacing: 1px;
+    font-size: 7px; letter-spacing: 1px;
     text-transform: uppercase;
     padding: 2px 6px;
     border: 1px solid var(--card-accent);
@@ -219,24 +191,17 @@
     border-top: 1px solid rgba(0,0,0,0.1);
   }
   .card-time {
-    font-size: 8px;
-    color: rgba(0,0,0,0.4);
-    letter-spacing: 0.5px;
+    font-size: 8px; color: rgba(0,0,0,0.4); letter-spacing: 0.5px;
   }
   .card-type {
-    font-size: 8px;
-    font-weight: 600;
+    font-size: 8px; font-weight: 600;
     color: var(--card-accent);
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    letter-spacing: 1px; text-transform: uppercase;
   }
 
-  /* 하단 카운터 */
   .display-footer {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     padding: 20px 40px;
     display: flex;
     justify-content: space-between;
@@ -245,25 +210,15 @@
     background: linear-gradient(to top, rgba(13,13,11,0.95) 0%, transparent 100%);
   }
   .counter {
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: rgba(245,240,232,0.3);
-    text-transform: uppercase;
+    font-size: 11px; letter-spacing: 2px;
+    color: rgba(245,240,232,0.3); text-transform: uppercase;
   }
-  .counter span {
-    color: var(--gold);
-    font-weight: 600;
-  }
+  .counter span { color: var(--gold); font-weight: 600; }
   .qr-hint {
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: rgba(245,240,232,0.3);
-    text-transform: uppercase;
+    font-size: 11px; letter-spacing: 2px;
+    color: rgba(245,240,232,0.3); text-transform: uppercase;
   }
-  .qr-hint em {
-    color: var(--punch);
-    font-style: normal;
-  }
+  .qr-hint em { color: var(--punch); font-style: normal; }
 </style>
 </head>
 <body>
@@ -290,8 +245,53 @@
   const SHEET_ID = '1C04UPwBT2Pbzy9Oxc7WOeI1N0_YCDuAVWVzeixeddhg';
   const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
 
+  const CARD_W = 260;
+  const CARD_H = 215;
+  const TOP_PAD = 85;
+  const BOT_PAD = 85;
+
   let allCards = [];
   let displayedIds = new Set();
+
+  // ─── 슬롯 방식: 화면을 격자로 나누고 각 칸에 카드 1장씩 ───
+  // 이 함수는 카드가 들어갈 수 있는 모든 위치(슬롯)를 미리 계산함
+  function buildSlots() {
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    const usableH = H - TOP_PAD - BOT_PAD;
+
+    // 가로/세로 몇 칸 들어가나 (최소 여백 20px 포함)
+    const cols = Math.max(2, Math.floor(W / (CARD_W + 20)));
+    const rows = Math.max(2, Math.floor(usableH / (CARD_H + 20)));
+
+    // 각 셀의 실제 픽셀 크기
+    const cellW = W / cols;
+    const cellH = usableH / rows;
+
+    const slots = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        // 셀 왼쪽 상단 기준으로 카드를 놓을 수 있는 범위 계산
+        const maxX = cellW - CARD_W - 10;
+        const maxY = cellH - CARD_H - 10;
+        slots.push({
+          x: c * cellW + 10 + Math.random() * Math.max(0, maxX),
+          y: TOP_PAD + r * cellH + 10 + Math.random() * Math.max(0, maxY)
+        });
+      }
+    }
+
+    // Fisher-Yates 셔플 — 카드가 좌→우, 위→아래 순서가 아니라 무작위로 채워지도록
+    for (let i = slots.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [slots[i], slots[j]] = [slots[j], slots[i]];
+    }
+
+    return slots;
+  }
+
+  // 슬롯 목록 (페이지 로드 시 한 번 계산)
+  let slots = buildSlots();
 
   function getRoleClass(role) {
     if (!role) return 'role-default';
@@ -313,93 +313,51 @@
   }
 
   function parseResult(resultText) {
+    if (!resultText) return null;
     try {
-      const clean = resultText.replace(/```json|```/g, '').trim();
-      return JSON.parse(clean);
+      return JSON.parse(resultText.replace(/```json|```/g, '').trim());
     } catch (e) {
       return null;
     }
   }
 
-  // ─── FIX 1: 카드를 화면 전체에 고르게 퍼뜨리는 새 배치 방식 ───
-  // 기존: 6개 고정 zone → 카드가 많아지면 겹침
-  // 새로: 화면을 격자(grid)로 나누고, 각 셀 안에서 랜덤 위치 선택
-  // 헤더(80px)와 푸터(80px) 영역은 제외해서 겹치지 않게 함
-  function getSpreadPosition(index, totalSoFar) {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-
-    const HEADER_SAFE = 90;   // 헤더 아래
-    const FOOTER_SAFE = 90;   // 푸터 위
-    const CARD_W = 280;       // 카드 너비 + 여유
-    const CARD_H = 220;       // 카드 높이 + 여유
-
-    const usableW = w - CARD_W;
-    const usableH = h - HEADER_SAFE - FOOTER_SAFE - CARD_H;
-
-    // 화면을 cols × rows 격자로 나눔
-    const cols = Math.max(3, Math.floor(w / (CARD_W + 20)));
-    const rows = Math.max(2, Math.floor(usableH / (CARD_H + 20)));
-
-    const cellW = usableW / cols;
-    const cellH = usableH / rows;
-
-    // index를 격자 셀에 순환 배치 (모든 셀을 고루 채움)
-    const cellIndex = index % (cols * rows);
-    const col = cellIndex % cols;
-    const row = Math.floor(cellIndex / cols);
-
-    // 셀 안에서 랜덤 오프셋 (40% 범위 내)
-    const jitterX = (Math.random() - 0.5) * cellW * 0.4;
-    const jitterY = (Math.random() - 0.5) * cellH * 0.4;
-
-    const x = Math.floor(col * cellW + cellW / 2 + jitterX);
-    const y = Math.floor(HEADER_SAFE + row * cellH + cellH / 2 + jitterY);
-
-    return { x: Math.max(0, Math.min(x, usableW)), y: Math.max(HEADER_SAFE, y) };
-  }
-
-  function placeCard(cardData, index) {
+  function placeCard(cardData, cardIndex) {
     const stage = document.getElementById('cardStage');
-
     const parsed = parseResult(cardData.result);
     if (!parsed) return;
 
+    // 슬롯 순환: 카드가 슬롯보다 많아지면 처음부터 다시
+    const slot = slots[cardIndex % slots.length];
+    const x = Math.round(slot.x);
+    const y = Math.round(slot.y);
+
     const roleClass = getRoleClass(cardData.role);
     const seed = parsed.seed || Math.floor(Math.random() * 4095);
-    const rot = (Math.random() * 8 - 4).toFixed(1);  // -4deg ~ +4deg (기존보다 약간 더 기울임)
+    const rot  = (Math.random() * 10 - 5).toFixed(2) + 'deg';
+    const dur  = (7 + Math.random() * 5).toFixed(1) + 's';
+    const dly  = '-' + (Math.random() * 10).toFixed(1) + 's';
 
-    // FIX 3: duration을 짧게 해서 더 활발하게 움직이게 (기존 8~14s → 5~9s)
-    const duration = (5 + Math.random() * 4).toFixed(1);
-    // delay를 음수로 줘서 카드들이 제각각 다른 타이밍에 움직임
-    const delay = -(Math.random() * parseFloat(duration)).toFixed(1);
+    const tags = (parsed.tags || []).slice(0, 3)
+      .map(t => `<div class="card-tag">${t}</div>`).join('');
 
-    const { x, y } = getSpreadPosition(index, allCards.length);
+    const timeStr = cardData.timestamp
+      ? new Date(cardData.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      : '';
 
-    const tags = (parsed.tags || []).slice(0, 3).map(t =>
-      `<div class="card-tag">${t}</div>`
-    ).join('');
-
-    const timeStr = new Date(cardData.timestamp).toLocaleTimeString('en-US', {
-      hour: '2-digit', minute: '2-digit'
-    });
-
-    // FIX 2: nickname — Google Sheets gviz API는 빈 셀을 null로 반환함
-    // cardData.nickname이 null/undefined/''/공백인 경우 모두 'Anonymous'로 폴백
-    // 실제 값이 있을 때만 표시
-    const displayName = (cardData.nickname && cardData.nickname.trim())
-      ? cardData.nickname.trim()
+    const displayName = (cardData.nickname && String(cardData.nickname).trim())
+      ? String(cardData.nickname).trim()
       : 'Anonymous';
 
     const card = document.createElement('div');
     card.className = `float-card ${roleClass}`;
-    card.style.cssText = `
-      left: ${x}px;
-      top: ${y}px;
-      --rot: ${rot}deg;
-      --duration: ${duration}s;
-      --delay: ${delay}s;
-    `;
+    card.setAttribute('style', [
+      `left:${x}px`,
+      `top:${y}px`,
+      `--rot:${rot}`,
+      `--dur:${dur}`,
+      `--dly:${dly}`
+    ].join(';'));
+
     card.innerHTML = `
       <div class="card-stripe"></div>
       <div class="card-inner">
@@ -408,7 +366,7 @@
             <div class="card-exhibition">CJR · Punched In</div>
             <div class="card-name">${displayName}</div>
           </div>
-          <div class="card-num">#${String(index + 1).padStart(4, '0')}</div>
+          <div class="card-num">#${String(cardIndex + 1).padStart(4, '0')}</div>
         </div>
         <div class="hole-row">${makeHoles(seed)}</div>
         <div class="card-quote">${parsed.key_quote || ''}</div>
@@ -417,17 +375,15 @@
           <div class="card-time">${timeStr}</div>
           <div class="card-type">${parsed.visitor_type || ''}</div>
         </div>
-      </div>
-    `;
+      </div>`;
 
     stage.appendChild(card);
-    // 약간의 딜레이 후 visible 클래스 추가 → fade-in 효과
-    setTimeout(() => card.classList.add('visible'), 150);
+    setTimeout(() => card.classList.add('visible'), 120);
   }
 
   async function fetchData() {
     try {
-      const res = await fetch(SHEET_URL);
+      const res  = await fetch(SHEET_URL + '&t=' + Date.now());
       const text = await res.text();
       const json = JSON.parse(
         text
@@ -436,34 +392,30 @@
           .replace(/\);$/, '')
       );
 
-      const rows = json.table.rows || [];
+      const rows = json.table?.rows || [];
       const newCards = [];
 
       rows.forEach((row, i) => {
-        const cols = row.c || [];
-        const id = i;
-        if (displayedIds.has(id)) return;
+        if (displayedIds.has(i)) return;
+        const c = row.c || [];
+        const result = c[5]?.v ?? '';
+        if (!result) return;
 
-        const timestamp = cols[0]?.v || '';
-
-        // ─── FIX 2: gviz API는 null 셀을 {v: null}로 반환 ───
-        // null 체크를 명시적으로 해야 'Anonymous' 버그가 사라짐
-        const nickname  = cols[1]?.v ?? '';   // null이면 빈 문자열
-        const role      = cols[2]?.v ?? '';
-        const language  = cols[3]?.v ?? '';
-        const response  = cols[4]?.v ?? '';
-        const result    = cols[5]?.v ?? '';
-
-        if (result) {
-          newCards.push({ id, timestamp, nickname, role, language, response, result });
-        }
+        newCards.push({
+          id:        i,
+          timestamp: c[0]?.v ?? '',
+          nickname:  c[1]?.v ?? '',
+          role:      c[2]?.v ?? '',
+          language:  c[3]?.v ?? '',
+          response:  c[4]?.v ?? '',
+          result
+        });
       });
 
       newCards.forEach((card, i) => {
         displayedIds.add(card.id);
         allCards.push(card);
-        // 새 카드마다 400ms 간격으로 등장 (기존 300ms보다 약간 여유있게)
-        setTimeout(() => placeCard(card, allCards.length - 1), i * 400);
+        setTimeout(() => placeCard(card, allCards.length - 1), i * 500);
       });
 
       document.getElementById('totalCount').textContent = allCards.length;
@@ -475,6 +427,7 @@
 
   fetchData();
   setInterval(fetchData, 30000);
+  window.addEventListener('resize', () => { slots = buildSlots(); });
 </script>
 </body>
 </html>
