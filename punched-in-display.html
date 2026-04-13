@@ -55,7 +55,6 @@
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     opacity: 0;
     transition: opacity 1.2s ease;
-    /* left/top은 JS에서 vw/vh 단위로 직접 설정 */
   }
   .float-card.visible {
     opacity: 1;
@@ -131,32 +130,27 @@
   const SHEET_ID = '1C04UPwBT2Pbzy9Oxc7WOeI1N0_YCDuAVWVzeixeddhg';
   const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
 
-  let allCards = [];
+  let totalPlaced = 0;
   let displayedIds = new Set();
 
-  // ─── 위치 계산: vw/vh % 기반, JS 픽셀 계산 없음 ───
-  // 화면을 3열 × 3행 = 9구역으로 나눔
-  // 각 구역 안에서 랜덤 오프셋 적용
-  // 헤더(10vh)와 푸터(10vh) 제외 → 유효 영역: 10vh ~ 88vh
+  // 화면을 3×3 = 9구역으로 나눔, vw/vh 단위
   const GRID = [
-    // [leftMin%, leftMax%, topMin%, topMax%]  — 9 구역
-    [ 2, 25,  12, 38],  // 0: 좌상
-    [30, 53,  12, 38],  // 1: 중상
-    [58, 78,  12, 38],  // 2: 우상
-    [ 2, 25,  42, 62],  // 3: 좌중
-    [30, 53,  42, 62],  // 4: 중중
-    [58, 78,  42, 62],  // 5: 우중
-    [ 2, 25,  65, 84],  // 6: 좌하
-    [30, 53,  65, 84],  // 7: 중하
-    [58, 78,  65, 84],  // 8: 우하
+    [ 2, 25,  12, 38],  // 좌상
+    [32, 55,  12, 38],  // 중상
+    [62, 80,  12, 38],  // 우상
+    [ 2, 25,  43, 62],  // 좌중
+    [32, 55,  43, 62],  // 중중
+    [62, 80,  43, 62],  // 우중
+    [ 2, 25,  66, 84],  // 좌하
+    [32, 55,  66, 84],  // 중하
+    [62, 80,  66, 84],  // 우하
   ];
 
-  function getPosition(cardIndex) {
-    // 카드 번호를 구역에 순환 배정 (0→구역0, 1→구역1, ... 9→구역0, ...)
-    const zone = GRID[cardIndex % GRID.length];
-    const leftPct = zone[0] + Math.random() * (zone[1] - zone[0]);
-    const topPct  = zone[2] + Math.random() * (zone[3] - zone[2]);
-    return { left: leftPct.toFixed(1) + 'vw', top: topPct.toFixed(1) + 'vh' };
+  function getPosition(index) {
+    const zone = GRID[index % GRID.length];
+    const left = (zone[0] + Math.random() * (zone[1] - zone[0])).toFixed(1);
+    const top  = (zone[2] + Math.random() * (zone[3] - zone[2])).toFixed(1);
+    return { left: left + 'vw', top: top + 'vh' };
   }
 
   function getRoleClass(role) {
@@ -187,12 +181,12 @@
     const parsed = parseResult(cardData.result);
     if (!parsed) return;
 
-    const pos      = getPosition(cardIndex);
+    const pos       = getPosition(cardIndex);
     const roleClass = getRoleClass(cardData.role);
-    const seed     = parsed.seed || Math.floor(Math.random() * 4095);
-    const rot      = (Math.random() * 10 - 5).toFixed(1) + 'deg';
-    const dur      = (7 + Math.random() * 5).toFixed(1) + 's';
-    const dly      = '-' + (Math.random() * 10).toFixed(1) + 's';
+    const seed      = parsed.seed || Math.floor(Math.random() * 4095);
+    const rot       = (Math.random() * 10 - 5).toFixed(1) + 'deg';
+    const dur       = (7 + Math.random() * 5).toFixed(1) + 's';
+    const dly       = '-' + (Math.random() * 10).toFixed(1) + 's';
 
     const tags = (parsed.tags || []).slice(0, 3)
       .map(t => `<div class="card-tag">${t}</div>`).join('');
@@ -207,7 +201,6 @@
 
     const card = document.createElement('div');
     card.className = `float-card ${roleClass}`;
-    // vw/vh 단위로 직접 설정 — 픽셀 계산 없음
     card.style.left = pos.left;
     card.style.top  = pos.top;
     card.style.setProperty('--rot', rot);
@@ -242,7 +235,9 @@
       const res  = await fetch(SHEET_URL + '&t=' + Date.now());
       const text = await res.text();
       const json = JSON.parse(
-        text.replace('/*O_o*/','').replace('google.visualization.Query.setResponse(','').replace(/\);$/,'')
+        text.replace('/*O_o*/','')
+            .replace('google.visualization.Query.setResponse(','')
+            .replace(/\);$/,'')
       );
 
       const rows = json.table?.rows || [];
@@ -254,7 +249,7 @@
         const result = c[5]?.v ?? '';
         if (!result) return;
         newCards.push({
-          id: i,
+          id:        i,
           timestamp: c[0]?.v ?? '',
           nickname:  c[1]?.v ?? '',
           role:      c[2]?.v ?? '',
@@ -264,13 +259,20 @@
         });
       });
 
+      // ─── 핵심 수정 ───
+      // 이전 코드: placeCard(card, allCards.length - 1)
+      // 문제: setTimeout 클로저 안에서 allCards.length가 
+      //       이미 최종값(6)으로 고정되어 모든 카드가 같은 index를 받음
+      // 수정: 카드를 추가하기 전에 index를 미리 변수에 저장
       newCards.forEach((card, i) => {
         displayedIds.add(card.id);
-        allCards.push(card);
-        setTimeout(() => placeCard(card, allCards.length - 1), i * 500);
+        const cardIndex = totalPlaced; // 지금 이 시점의 값을 캡처
+        totalPlaced++;
+        setTimeout(() => placeCard(card, cardIndex), i * 500);
       });
 
-      document.getElementById('totalCount').textContent = allCards.length;
+      document.getElementById('totalCount').textContent = totalPlaced;
+
     } catch(e) {
       console.error('Fetch error:', e);
     }
