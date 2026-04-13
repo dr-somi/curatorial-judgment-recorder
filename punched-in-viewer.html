@@ -7,133 +7,80 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #D6EAF8;
-    --paper: #FFFFFF;
-    --ink: #1A1814;
-    --punch: #E83B2A;
-    --punch-dim: #8B2419;
-    --gold: #C8A84B;
-    --gray: #4A4540;
-    --gray-light: #7A7470;
-    --font-mono: 'IBM Plex Mono', monospace;
-    --font-sans: 'IBM Plex Sans', sans-serif;
+    --bg: #D6EAF8; --paper: #FFFFFF; --ink: #1A1814;
+    --punch: #E83B2A; --punch-dim: #8B2419; --gold: #C8A84B;
+    --gray: #4A4540; --font-mono: 'IBM Plex Mono', monospace; --font-sans: 'IBM Plex Sans', sans-serif;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: var(--font-mono);
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 20px;
-  }
-
+  body { font-family: var(--font-mono); background: var(--bg); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 20px; }
   .container { width: 100%; max-width: 480px; }
-
-  /* 헤더 */
   .header { margin-bottom: 36px; }
   .venue-line { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); margin-bottom: 8px; }
   .title { font-family: var(--font-mono); font-size: 42px; font-weight: 600; letter-spacing: -1px; line-height: 1; color: var(--ink); display: inline-block; }
   .title::after { content: '▌'; color: var(--punch); animation: blink 1.2s step-end infinite; }
   @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
   .date-line { font-size: 11px; color: var(--gray); margin-top: 8px; letter-spacing: 1px; }
-
-  /* 섹션 레이블 */
   .section-label { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--punch); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
   .section-label::before { content: '//'; color: var(--punch-dim); }
-
-  /* 언어 버튼 */
   .lang-buttons { display: flex; gap: 4px; flex-wrap: nowrap; margin-bottom: 24px; overflow-x: auto; }
   .lang-btn { padding: 4px 8px; background: transparent; border: 1px solid rgba(0,0,0,0.2); border-radius: 2px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.5px; color: var(--gray); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .lang-btn:hover { border-color: rgba(0,0,0,0.4); color: var(--ink); }
   .lang-btn.selected { background: var(--punch); border-color: var(--punch); color: white; }
-
-  /* 닉네임 */
   .nickname-input { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.2); border-radius: 2px; font-family: var(--font-mono); font-size: 14px; color: var(--ink); outline: none; transition: border-color 0.2s; margin-bottom: 24px; }
   .nickname-input::placeholder { color: rgba(0,0,0,0.3); font-style: italic; }
   .nickname-input:focus { border-color: var(--punch); }
-
-  /* 역할 버튼 */
   .role-buttons { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
   .role-btn { padding: 8px 14px; background: transparent; border: 1px solid rgba(0,0,0,0.2); border-radius: 2px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); cursor: pointer; transition: all 0.2s; }
   .role-btn:hover { border-color: rgba(0,0,0,0.4); color: var(--ink); }
   .role-btn.selected { background: var(--punch); border-color: var(--punch); color: white; }
-
-  /* 질문 */
   .prompt-question { font-family: var(--font-sans); font-size: 20px; font-weight: 300; line-height: 1.4; color: var(--ink); margin-bottom: 6px; padding-left: 14px; border-left: 2px solid var(--punch); }
   .prompt-sub { font-size: 12px; color: var(--gray); margin-bottom: 16px; padding-left: 14px; font-family: var(--font-sans); }
-
-  /* 텍스트 입력 */
   .input-area { position: relative; margin-bottom: 16px; }
   textarea { width: 100%; min-height: 130px; background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.2); border-radius: 2px; padding: 14px; font-family: var(--font-mono); font-size: 14px; font-weight: 300; color: var(--ink); resize: none; outline: none; transition: border-color 0.2s; line-height: 1.7; }
   textarea::placeholder { color: rgba(0,0,0,0.3); font-style: italic; }
   textarea:focus { border-color: var(--punch); }
   .char-count { position: absolute; bottom: 10px; right: 12px; font-size: 10px; color: var(--gray); }
-
-  /* 제출 버튼 */
   .submit-btn { width: 100%; padding: 16px; background: var(--punch); border: none; border-radius: 2px; font-family: var(--font-mono); font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: white; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .submit-btn:hover:not(:disabled) { background: #FF4433; transform: translateY(-1px); }
   .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
   .loading-dots { display: none; gap: 4px; align-items: center; }
   .loading-dots span { width: 5px; height: 5px; background: white; border-radius: 50%; animation: dot-bounce 1.2s infinite; }
   .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
   .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes dot-bounce { 0%, 80%, 100% { transform: scale(0.8); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
-
   .error-msg { font-size: 12px; color: var(--punch); margin-top: 10px; display: none; font-family: var(--font-sans); }
-
-  /* 결과 화면 */
   .result-screen { display: none; }
-
   .library-card { background: var(--paper); color: var(--ink); border-radius: 2px; overflow: hidden; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
   .library-card.visible { opacity: 1; transform: translateY(0); }
-
   .card-stripe { height: 8px; background: repeating-linear-gradient(90deg, var(--punch) 0px, var(--punch) 20px, #1A1814 20px, #1A1814 40px, var(--gold) 40px, var(--gold) 60px, #1A1814 60px, #1A1814 80px); }
-
   .card-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 20px 12px; border-bottom: 1px solid rgba(26,24,20,0.1); }
   .card-library { font-size: 8px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); margin-bottom: 2px; }
   .card-title { font-family: var(--font-mono); font-size: 18px; font-weight: 600; color: var(--ink); letter-spacing: -0.5px; }
   .card-number { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--punch); letter-spacing: 1px; }
-
   .hole-row { display: flex; gap: 5px; padding: 10px 20px; background: var(--ink); }
   .hole { width: 7px; height: 7px; border-radius: 50%; background: rgba(245,240,232,0.2); }
   .hole.punched { background: var(--punch); box-shadow: 0 0 5px rgba(232,59,42,0.7); }
-
   .card-body { padding: 20px; }
   .card-name-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .card-name { font-family: var(--font-mono); font-size: 16px; font-weight: 600; color: var(--ink); letter-spacing: 1px; text-transform: uppercase; }
   .card-role-badge { font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--gray); color: var(--gray); border-radius: 1px; }
-
   .card-divider { height: 1px; background: repeating-linear-gradient(90deg, #ccc 0px, #ccc 4px, transparent 4px, transparent 8px); margin-bottom: 16px; }
-
   .card-key-line { font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
   .card-key-quote { font-family: var(--font-sans); font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1.5; margin-bottom: 16px; padding-left: 10px; border-left: 3px solid var(--punch); }
-
   .card-analysis-label { font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
   .card-analysis { font-family: var(--font-sans); font-size: 14px; font-weight: 300; color: var(--ink); line-height: 1.7; margin-bottom: 16px; }
-
   .card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
   .tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border: 1px solid #ccc; border-radius: 1px; color: var(--gray); }
   .tag.primary { background: var(--ink); color: white; border-color: var(--ink); }
-
   .card-footer { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); }
   .card-timestamp { font-size: 10px; color: var(--gray); letter-spacing: 1px; font-weight: 500; }
   .card-visitor-type { font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--punch); text-transform: uppercase; letter-spacing: 1px; }
-
   .again-btn { width: 100%; margin-top: 16px; padding: 14px; background: transparent; border: 1px solid rgba(0,0,0,0.2); border-radius: 2px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); cursor: pointer; transition: all 0.2s; }
   .again-btn:hover { border-color: rgba(0,0,0,0.4); color: var(--ink); }
-
   .footer { margin-top: 36px; text-align: center; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); font-weight: 500; }
 </style>
 </head>
 <body>
-
 <div class="container">
   <div class="header">
     <div class="venue-line">Bloc Gallery · Apr 13–17, 2026</div>
@@ -144,8 +91,8 @@
   <div class="input-screen" id="inputScreen">
     <div class="section-label">Language</div>
     <div class="lang-buttons">
-      <button class="lang-btn selected" onclick="selectLang(this, 'ko')">한국어</button>
-      <button class="lang-btn" onclick="selectLang(this, 'en')">English</button>
+      <button class="lang-btn selected" onclick="selectLang(this, 'en')">English</button>
+      <button class="lang-btn" onclick="selectLang(this, 'ko')">한국어</button>
       <button class="lang-btn" onclick="selectLang(this, 'es')">Español</button>
       <button class="lang-btn" onclick="selectLang(this, 'fr')">Français</button>
       <button class="lang-btn" onclick="selectLang(this, 'de')">Deutsch</button>
@@ -218,10 +165,10 @@
   emailjs.init('i6V9Zhl_2a4PRgaIF');
 
   let visitCount = parseInt(localStorage.getItem('punchedInCount') || '0');
-  let selectedLang = 'ko';
+  let selectedLang = 'en';
   let selectedRole = '';
 
-  const langNames = { ko: '한국어', en: 'English', es: 'Español', fr: 'Français', de: 'Deutsch', zh: '中文', pt: 'Português' };
+  const langNames = { en: 'English', ko: '한국어', es: 'Español', fr: 'Français', de: 'Deutsch', zh: '中文', pt: 'Português' };
 
   function selectLang(btn, lang) {
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('selected'));
@@ -287,13 +234,23 @@ Analyze their response. Respond ONLY in ${langNames[selectedLang]} with valid JS
   "tags": ["tag1", "tag2", "tag3"],
   "seed": <integer 0-4095>
 }`,
-          messages: [{ role: "user", content: `Nickname: ${nickname}\nRole: ${selectedRole || 'Not specified'}\nResponse: ${text}` }]
+          messages: [{ role: "user", content: `Nickname: ${nickname}\nRole: ${selectedRole || 'Not specified'}\nResponse: ${text}` }],
+
+          // ─── 핵심 수정: visitorData를 Worker에 함께 전송 ───
+          // Worker의 saveToSheets()가 이 데이터를 Sheets에 저장함
+          visitorData: {
+            nickname:  nickname,
+            role:      selectedRole || 'Not specified',
+            language:  selectedLang,
+            response:  text
+          }
         })
       });
 
       const data = await response.json();
       const raw = data.content[0].text;
       const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+
       showResult(parsed, text, nickname);
 
     } catch (err) {
@@ -348,7 +305,7 @@ Analyze their response. Respond ONLY in ${langNames[selectedLang]} with valid JS
 
   function resetForm() {
     selectedRole = '';
-    selectedLang = 'ko';
+    selectedLang = 'en';
     document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('selected'));
     document.querySelector('.lang-btn').classList.add('selected');
